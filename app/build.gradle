@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 25
@@ -32,9 +31,20 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:25.1.0'
 
     // Schematic dependencies for ContentProvider
-    apt 'net.simonvt.schematic:schematic-compiler:0.6.3'
+    annotationProcessor 'net.simonvt.schematic:schematic-compiler:0.6.3'
     implementation 'net.simonvt.schematic:schematic:0.6.3'
 
     // Preferences Dependencies
     implementation 'com.android.support:preference-v7:25.1.0'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.0'
+            }
+        }
+    }
 }
